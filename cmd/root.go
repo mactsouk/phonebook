@@ -160,6 +160,23 @@ to quickly create a Cobra application.`,
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	err := setJSONFILE()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = readCSVFile(JSONFILE)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = createIndex()
+	if err != nil {
+		fmt.Println("Cannot create index.")
+		return
+	}
 	cobra.CheckErr(rootCmd.Execute())
 }
 
