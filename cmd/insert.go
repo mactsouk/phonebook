@@ -38,3 +38,20 @@ func init() {
 	// is called directly, e.g.:
 	// insertCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
+
+func insert(pS *Entry) error {
+	// If it already exists, do not add it
+	_, ok := index[(*pS).Tel]
+	if ok {
+		return fmt.Errorf("%s already exists", pS.Tel)
+	}
+	data = append(data, *pS)
+	// Update the index
+	_ = createIndex()
+
+	err := saveJSONFile(JSONFILE)
+	if err != nil {
+		return err
+	}
+	return nil
+}

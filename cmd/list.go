@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/spf13/cobra"
 )
@@ -37,4 +38,29 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+// Implement sort.Interface
+func (a PhoneBook) Len() int {
+	return len(a)
+}
+
+// First based on surname. If they have the same
+// surname take into account the name.
+func (a PhoneBook) Less(i, j int) bool {
+	if a[i].Surname == a[j].Surname {
+		return a[i].Name < a[j].Name
+	}
+	return a[i].Surname < a[j].Surname
+}
+
+func (a PhoneBook) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func list() {
+	sort.Sort(PhoneBook(data))
+	for _, v := range data {
+		fmt.Println(v)
+	}
 }

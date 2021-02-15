@@ -6,6 +6,8 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -37,4 +39,13 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// searchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func search(key string) *Entry {
+	i, ok := index[key]
+	if !ok {
+		return nil
+	}
+	data[i].LastAccess = strconv.FormatInt(time.Now().Unix(), 10)
+	return &data[i]
 }
