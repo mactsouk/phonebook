@@ -26,6 +26,11 @@ type Entry struct {
 	LastAccess string `json:"lastaccess"`
 }
 
+//
+// Global Variables
+//
+
+// JSONFILE resides in the current directory
 var JSONFILE = "./data.json"
 
 type PhoneBook []Entry
