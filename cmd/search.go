@@ -7,9 +7,7 @@ package cmd
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -29,11 +27,12 @@ var searchCmd = &cobra.Command{
 		}
 		t := strings.ReplaceAll(searchKey, "-", "")
 
-		// Search for it
 		if !matchTel(t) {
 			fmt.Println("Not a valid telephone number:", t)
 			return
 		}
+
+		// Search for it
 		temp := search(t)
 		if temp == nil {
 			fmt.Println("Number not found:", t)
@@ -53,7 +52,7 @@ func search(key string) *Entry {
 	if !ok {
 		return nil
 	}
-	data[i].LastAccess = strconv.FormatInt(time.Now().Unix(), 10)
+
 	return &data[i]
 }
 

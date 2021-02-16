@@ -91,7 +91,7 @@ func initS(N, S, T string) *Entry {
 	if T == "" || S == "" {
 		return nil
 	}
-	// Give LastAccess a value
+
 	LastAccess := strconv.FormatInt(time.Now().Unix(), 10)
 	return &Entry{Name: N, Surname: S, Tel: T, LastAccess: LastAccess}
 }
