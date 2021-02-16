@@ -6,7 +6,9 @@ package cmd
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -15,30 +17,37 @@ import (
 // searchCmd represents the search command
 var searchCmd = &cobra.Command{
 	Use:   "search",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "search for the number",
+	Long: `search whether a telephone number exists in the
+	phone book application or not.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("search called")
+
+		// Get key
+		searchKey, _ := cmd.Flags().GetString("key")
+		if searchKey == "" {
+			fmt.Println("Not a valid key:", searchKey)
+			return
+		}
+		t := strings.ReplaceAll(searchKey, "-", "")
+
+		// Search for it
+		if !matchTel(t) {
+			fmt.Println("Not a valid telephone number:", t)
+			return
+		}
+		temp := search(t)
+		if temp == nil {
+			fmt.Println("Number not found:", t)
+			return
+		}
+		fmt.Println(*temp)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// searchCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// searchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	searchCmd.Flags().StringP("key", "k", "", "Key to search")
 }
 
 func search(key string) *Entry {
@@ -48,4 +57,10 @@ func search(key string) *Entry {
 	}
 	data[i].LastAccess = strconv.FormatInt(time.Now().Unix(), 10)
 	return &data[i]
+}
+
+func matchTel(s string) bool {
+	t := []byte(s)
+	re := regexp.MustCompile(`\d+$`)
+	return re.Match(t)
 }

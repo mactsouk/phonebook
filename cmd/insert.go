@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -13,30 +14,55 @@ import (
 // insertCmd represents the insert command
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "insert new data",
+	Long:  `This command inserts new data into the phone book application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("insert called")
+
+		// Get the data
+		name, _ := cmd.Flags().GetString("name")
+		if name == "" {
+			fmt.Println("Not a valid name:", name)
+			return
+		}
+
+		surname, _ := cmd.Flags().GetString("surname")
+		if surname == "" {
+			fmt.Println("Not a valid surname:", surname)
+			return
+		}
+
+		tel, _ := cmd.Flags().GetString("telephone")
+		if tel == "" {
+			fmt.Println("Not a valid telephone:", tel)
+			return
+		}
+
+		t := strings.ReplaceAll(tel, "-", "")
+		if !matchTel(t) {
+			fmt.Println("Not a valid telephone number:", tel)
+			return
+		}
+
+		temp := initS(name, surname, t)
+		if temp == nil {
+			fmt.Println("Not a valid record:", temp)
+			return
+		}
+
+		// Insert data
+		err := insert(temp)
+		if err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(insertCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// insertCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// insertCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	insertCmd.Flags().StringP("name", "n", "", "name value")
+	insertCmd.Flags().StringP("surname", "s", "", "surname value")
+	insertCmd.Flags().StringP("telephone", "t", "", "telephone value")
 }
 
 func insert(pS *Entry) error {
