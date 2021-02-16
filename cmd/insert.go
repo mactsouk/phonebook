@@ -70,9 +70,8 @@ func insert(pS *Entry) error {
 		return fmt.Errorf("%s already exists", pS.Tel)
 	}
 	data = append(data, *pS)
-	// Update the index
-	_ = createIndex()
 
+	// Save the data
 	err := saveJSONFile(JSONFILE)
 	if err != nil {
 		return err

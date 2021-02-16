@@ -45,13 +45,11 @@ func Serialize(slice interface{}, w io.Writer) error {
 func readJSONFile(filepath string) error {
 	_, err := os.Stat(filepath)
 	if err != nil {
-		fmt.Println("Stat:", err)
 		return err
 	}
 
 	f, err := os.Open(filepath)
 	if err != nil {
-		fmt.Println("Open:", err)
 		return err
 	}
 	defer f.Close()
@@ -62,7 +60,6 @@ func readJSONFile(filepath string) error {
 	}
 
 	if err != nil {
-		fmt.Println("DeSerialize:", err)
 		return err
 	}
 
@@ -72,27 +69,24 @@ func readJSONFile(filepath string) error {
 func saveJSONFile(filepath string) error {
 	f, err := os.Create(filepath)
 	if err != nil {
-		fmt.Println("saveJSONFile:", err)
 		return err
 	}
 	defer f.Close()
 
 	err = Serialize(&data, f)
 	if err != nil {
-		fmt.Println("Serialize:", err)
 		return err
 	}
 
 	return nil
 }
 
-func createIndex() error {
+func createIndex() {
 	index = make(map[string]int)
 	for i, k := range data {
 		key := k.Tel
 		index[key] = i
 	}
-	return nil
 }
 
 // Initialized by the user – returns a pointer
@@ -153,15 +147,9 @@ func Execute() {
 	err = readJSONFile(JSONFILE)
 	// io.EOF is fine because it means the file is empty
 	if err != nil && err != io.EOF {
-		fmt.Println("readJSONFile:", err)
 		return
 	}
-
-	err = createIndex()
-	if err != nil {
-		fmt.Println("Cannot create index.")
-		return
-	}
+	createIndex()
 
 	cobra.CheckErr(rootCmd.Execute())
 }

@@ -26,7 +26,6 @@ var deleteCmd = &cobra.Command{
 		// Remove data
 		err := deleteEntry(key)
 		if err != nil {
-			fmt.Println("Error deleting:", key)
 			fmt.Println(err)
 			return
 		}

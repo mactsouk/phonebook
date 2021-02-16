@@ -53,6 +53,7 @@ func list() {
 		return
 	}
 	fmt.Println(text)
+	fmt.Printf("%d records in total.\n", len(data))
 }
 
 // PrettyPrintJSONstream pretty prints the contents of the phone book
