@@ -55,14 +55,9 @@ func readJSONFile(filepath string) error {
 	defer f.Close()
 
 	err = DeSerialize(&data, f)
-	if err == io.EOF {
-		return err
-	}
-
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -125,8 +120,6 @@ func setJSONFILE() error {
 	}
 	return nil
 }
-
-var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
