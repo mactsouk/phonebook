@@ -5,7 +5,6 @@ Copyright © 2021 Mihalis Tsoukalos <mihalistsoukalos@gmail.com>
 package cmd
 
 import (
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -35,39 +34,6 @@ type PhoneBook []Entry
 var data = PhoneBook{}
 var index map[string]int
 
-func readCSVFile(filepath string) error {
-	_, err := os.Stat(filepath)
-	if err != nil {
-		return err
-	}
-
-	f, err := os.Open(filepath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	// CSV file read all at once
-	lines, err := csv.NewReader(f).ReadAll()
-	if err != nil {
-		return err
-	}
-
-	for _, line := range lines {
-		temp := Entry{
-			Name:       line[0],
-			Surname:    line[1],
-			Tel:        line[2],
-			LastAccess: line[3],
-		}
-
-		// Storing to global variable
-		data = append(data, temp)
-	}
-
-	return nil
-}
-
 // DeSerialize decodes a serialized slice with JSON records
 func DeSerialize(slice interface{}, r io.Reader) error {
 	e := json.NewDecoder(r)
@@ -80,19 +46,47 @@ func Serialize(slice interface{}, w io.Writer) error {
 	return e.Encode(slice)
 }
 
-func saveJSONFile(filepath string) error {
-	csvfile, err := os.Create(filepath)
+func readJSONFile(filepath string) error {
+	_, err := os.Stat(filepath)
 	if err != nil {
+		fmt.Println("Stat:", err)
 		return err
 	}
-	defer csvfile.Close()
 
-	csvwriter := csv.NewWriter(csvfile)
-	for _, row := range data {
-		temp := []string{row.Name, row.Surname, row.Tel, row.LastAccess}
-		_ = csvwriter.Write(temp)
+	f, err := os.Open(filepath)
+	if err != nil {
+		fmt.Println("Open:", err)
+		return err
 	}
-	csvwriter.Flush()
+	defer f.Close()
+
+	err = DeSerialize(&data, f)
+	if err == io.EOF {
+		return err
+	}
+
+	if err != nil {
+		fmt.Println("DeSerialize:", err)
+		return err
+	}
+
+	return nil
+}
+
+func saveJSONFile(filepath string) error {
+	f, err := os.Create(filepath)
+	if err != nil {
+		fmt.Println("saveJSONFile:", err)
+		return err
+	}
+	defer f.Close()
+
+	err = Serialize(&data, f)
+	if err != nil {
+		fmt.Println("Serialize:", err)
+		return err
+	}
+
 	return nil
 }
 
@@ -160,9 +154,11 @@ func Execute() {
 		return
 	}
 
-	err = readCSVFile(JSONFILE)
-	if err != nil {
-		fmt.Println(err)
+	err = readJSONFile(JSONFILE)
+
+	// io.EOF is fine because it means the file is empty
+	if err != nil && err != io.EOF {
+		fmt.Println("readJSONFile:", err)
 		return
 	}
 
@@ -171,6 +167,7 @@ func Execute() {
 		fmt.Println("Cannot create index.")
 		return
 	}
+
 	cobra.CheckErr(rootCmd.Execute())
 }
 

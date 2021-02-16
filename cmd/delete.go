@@ -16,8 +16,6 @@ var deleteCmd = &cobra.Command{
 	Short: "delete an entry",
 	Long:  `delete an entry from the phone book application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
-
 		// Get key
 		key, _ := cmd.Flags().GetString("key")
 		if key == "" {

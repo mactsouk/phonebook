@@ -5,6 +5,8 @@ Copyright © 2021 Mihalis Tsoukalos <mihalistsoukalos@gmail.com>
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"sort"
 
@@ -17,7 +19,6 @@ var listCmd = &cobra.Command{
 	Short: "list all entries",
 	Long:  `This command lists all entries in the phone book application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
 		list()
 	},
 }
@@ -46,7 +47,22 @@ func (a PhoneBook) Swap(i, j int) {
 
 func list() {
 	sort.Sort(PhoneBook(data))
-	for _, v := range data {
-		fmt.Println(v)
+	text, err := PrettyPrintJSONstream(data)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+	fmt.Println(text)
+}
+
+func PrettyPrintJSONstream(data interface{}) (string, error) {
+	buffer := new(bytes.Buffer)
+	encoder := json.NewEncoder(buffer)
+	encoder.SetIndent("", "\t")
+
+	err := encoder.Encode(data)
+	if err != nil {
+		return "", err
+	}
+	return buffer.String(), nil
 }

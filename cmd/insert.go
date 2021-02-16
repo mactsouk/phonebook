@@ -17,8 +17,6 @@ var insertCmd = &cobra.Command{
 	Short: "insert new data",
 	Long:  `This command inserts new data into the phone book application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("insert called")
-
 		// Get the data
 		name, _ := cmd.Flags().GetString("name")
 		if name == "" {

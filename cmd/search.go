@@ -21,8 +21,6 @@ var searchCmd = &cobra.Command{
 	Long: `search whether a telephone number exists in the
 	phone book application or not.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("search called")
-
 		// Get key
 		searchKey, _ := cmd.Flags().GetString("key")
 		if searchKey == "" {
