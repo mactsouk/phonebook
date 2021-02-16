@@ -22,10 +22,6 @@ type Entry struct {
 	LastAccess string `json:"lastaccess"`
 }
 
-//
-// Global Variables
-//
-
 // JSONFILE resides in the current directory
 var JSONFILE = "./data.json"
 
@@ -155,7 +151,6 @@ func Execute() {
 	}
 
 	err = readJSONFile(JSONFILE)
-
 	// io.EOF is fine because it means the file is empty
 	if err != nil && err != io.EOF {
 		fmt.Println("readJSONFile:", err)

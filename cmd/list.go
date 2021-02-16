@@ -55,6 +55,7 @@ func list() {
 	fmt.Println(text)
 }
 
+// PrettyPrintJSONstream pretty prints the contents of the phone book
 func PrettyPrintJSONstream(data interface{}) (string, error) {
 	buffer := new(bytes.Buffer)
 	encoder := json.NewEncoder(buffer)
